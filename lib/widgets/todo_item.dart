@@ -1,37 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/todo.dart';
-import '../providers/todo_provider.dart';
 
 class TodoItem extends StatelessWidget {
   final Todo todo;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const TodoItem({super.key, required this.todo});
+  const TodoItem({
+    super.key,
+    required this.todo,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final todoProvider = Provider.of<TodoProvider>(context);
     return Card(
-      elevation: 6,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         title: Text(
           todo.title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(
+            decoration: todo.completed ? TextDecoration.lineThrough : null,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        leading: Checkbox(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          activeColor: Colors.blueAccent,
-          value: todo.completed,
-          onChanged: (bool? value) {
-            todoProvider.updateTodo(todo.id, value ?? false);
-          },
+        leading: Icon(
+          todo.completed ? Icons.check_circle : Icons.radio_button_unchecked,
+          color: todo.completed ? Colors.green : Colors.grey,
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.redAccent),
-          onPressed: () => todoProvider.deleteTodo(todo.id),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.greenAccent),
+              onPressed: onEdit,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.redAccent),
+              onPressed: onDelete,
+            ),
+          ],
         ),
       ),
     );
